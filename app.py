@@ -102,5 +102,3 @@ Location: %s
        instance['attributes']['location']))
 
         sendsms(os.environ['TESTSMSTO'], os.environ['PREFIX'] + ev['name'] + ' at ' + start_dt.astimezone(tz).strftime(date_fmt))
-
-# pprint(events)
