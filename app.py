@@ -1,54 +1,15 @@
 from dotenv import load_dotenv
+
+# vars used during development in this app module, as well as calnotify.sendlib
+load_dotenv()
+
 import requests
 import os
 import json
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
-from twilio.rest import Client
 from calnotify.datelib import is_days_away, set_tz, format_date, parse_and_format_date, isoparse
+from calnotify.sendlib import sendsms, sendmail
 
-load_dotenv()
 set_tz(os.environ['TZ'])
-
-
-def sendmail(to, subject, text):
-    """
-    Send a plain text email
-    :param to: the email address to send to
-    :param subject: the email subject
-    :param text: the plain text message to send
-    """
-    message = Mail(
-        from_email=os.environ['MAILFROM'],
-        to_emails=to,
-        subject=subject,
-        plain_text_content=text)
-    try:
-        sg = SendGridAPIClient(os.environ.get('SENDGRIDAPIKEY'))
-        response = sg.send(message)
-        print(response.status_code)
-        print(response.body)
-        print(response.headers)
-    except Exception as e:
-        print(e)
-
-
-def sendsms(to, text):
-    """
-    Sends a SMS
-    :param to: phone number in string format matching +15551234567
-    :param text: the plain text message to send
-    """
-    client = Client(os.environ.get('TWILIOSID'), os.environ.get('TWILIOTOKEN'))
-
-    message = client.messages.create(
-        messaging_service_sid=os.environ.get('TWILIOSERVICESID'),
-        body=text,
-        to=to
-    )
-
-    print(message.sid)
-
 
 data = json.loads(requests.get(
     'https://api.planningcenteronline.com' +
