@@ -1,31 +1,14 @@
 from dotenv import load_dotenv
 import requests
 import os
-import pytz
 import json
-import datetime
-from dateutil.parser import isoparse
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from twilio.rest import Client
+from calnotify.datelib import is_days_away, set_tz, format_date, parse_and_format_date, isoparse
 
 load_dotenv()
-
-tz = pytz.timezone(os.environ['TZ'])
-date_fmt = "%m/%d/%Y at %I:%M:%S %p"
-
-
-def is_days_away(dt, days) -> bool:
-    """
-    Test to see if a datetime is more than days away, but less than days-1 from now.
-    :rtype: bool
-    :param dt: datetime object to compare
-    :param days: the number of days away the time must be
-    :return: True if *dt* is *days* days away, else False
-    """
-    now = datetime.datetime.now().replace(tzinfo=pytz.UTC)
-    day = datetime.timedelta(days=1)
-    return dt - ((days + 1) * day) < now < dt - (days * day)
+set_tz(os.environ['TZ'])
 
 
 def sendmail(to, subject, text):
@@ -90,15 +73,16 @@ for instance in data['data']:
         ev = events[instance['relationships']['event']['data']['id']]
         print('email:')
         sendmail(os.environ['TESTMAILTO'],
-                 os.environ['PREFIX'] + ev['name'] + ' at ' + start_dt.astimezone(tz).strftime(date_fmt),
+                 os.environ['PREFIX'] + ev['name'] + ' at ' + format_date(start_dt),
                  """
 Don't forget!  There is an event coming up in %s days!
 
 Event: %s
 Time: from %s to %s
 Location: %s
-""" % (days_away, ev['name'], start_dt.astimezone(tz).strftime(date_fmt),
-       isoparse(instance['attributes']['ends_at']).astimezone(tz).strftime(date_fmt),
+""" % (days_away, ev['name'], format_date(start_dt),
+       parse_and_format_date(instance['attributes']['ends_at']),
        instance['attributes']['location']))
 
-        sendsms(os.environ['TESTSMSTO'], os.environ['PREFIX'] + ev['name'] + ' at ' + start_dt.astimezone(tz).strftime(date_fmt))
+        sendsms(os.environ['TESTSMSTO'],
+                os.environ['PREFIX'] + ev['name'] + ' at ' + format_date(start_dt))
