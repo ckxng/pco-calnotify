@@ -5,8 +5,9 @@ Global config such as the local timezone are kept here to avoid polluting
 the global namespace.
 """
 from datetime import datetime, timedelta
-from pytz import utc, timezone
+
 import dateutil.parser
+from pytz import utc, timezone
 
 # global timezone used by this module
 # update it with set_tz
@@ -45,7 +46,7 @@ def is_days_away(dt: datetime, days: int) -> bool:
     """
     global _now
     day = timedelta(days=1)
-    return _now.astimezone(tz).date()+(days*day) == dt.astimezone(tz).date()
+    return _now.astimezone(tz).date() + (days * day) == dt.astimezone(tz).date()
 
 
 def format_date(dt: datetime) -> str:

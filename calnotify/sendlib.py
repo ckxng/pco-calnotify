@@ -1,10 +1,11 @@
 """
 an email and SMS sending library for the pco-calnotify app
 """
+import os
+
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from twilio.rest import Client
-import os
 
 
 def sendmail(to, subject, text, sendgridapikey=os.environ['SENDGRIDAPIKEY']):

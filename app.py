@@ -17,7 +17,6 @@ with open('contacts.yaml', 'r') as file:
     for group in yaml.safe_load(file)['groups']:
         notify_list[group['days']] = group['contacts']
 
-
 data = json.loads(requests.get(
     'https://api.planningcenteronline.com' +
     '/resources/v2/event_instances' +
@@ -34,7 +33,6 @@ for included in data['included']:
         events[included['id']] = included['attributes']
     elif included['type'] == 'EventTime':
         event_times[included['id']] = included['attributes']
-
 
 # read all instances from the response data
 for instance in data['data']:
