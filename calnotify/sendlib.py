@@ -11,11 +11,17 @@ def sendmail(to, subject, text, sendgridapikey=os.environ['SENDGRIDAPIKEY']):
     """
     Send a plain text email
     If apikey is not provided, it will be fetched from os.environ['SENDGRIDAPIKEY']
+
+    If os.environ['TESTMODE']=='1', this function will return without taking action
     :param to: the email address to send to
     :param subject: the email subject
     :param text: the plain text message to send
     :param sendgridapikey: SendGrid API Key
     """
+    if os.environ.get('TESTMODE', None) == '1':
+        print("TESTMODE: sendmail:", to, subject)
+        return
+
     message = Mail(
         from_email=os.environ['MAILFROM'],
         to_emails=to,
@@ -40,12 +46,18 @@ def sendsms(to, text,
     If twiliosid is not provided, it will be fetched from os.environ['TWILIOSID'].
     If twiliotoken is not provided, it will be fetched from os.environ['TWILIOTOKEN'].
     If twilioservicesid is not provided, it will be fetched from os.environ['TWILIOSERVICESID'].
+
+    If os.environ['TESTMODE']=='1', this function will return without taking action
     :param to: phone number in string format matching +15551234567
     :param text: the plain text message to send
     :param twiliosid: the Twilio SID
     :param twiliotoken: the Twilio Token
     :param twilioservicesid: the Twilio Messaging Service SID
     """
+    if os.environ.get('TESTMODE', None) == '1':
+        print("TESTMODE: sendsms:", to, text)
+        return
+
     client = Client(twiliosid, twiliotoken)
 
     message = client.messages.create(

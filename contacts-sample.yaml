@@ -1,0 +1,25 @@
+---
+groups:
+  - name: "Next Day"
+    days: 1
+    contacts:
+      - type: "email"
+        to: "address@example.com"
+      - type: "sms"
+        to: "+15551234567"
+
+  - name: "Day After Tomorrow"
+    days: 2
+    contacts:
+      - type: "email"
+        to: "address@example.com"
+      - type: "sms"
+        to: "+15551234567"
+
+  - name: "In One Week"
+    days: 7
+    contacts:
+      - type: "email"
+        to: "address@example.com"
+      - type: "sms"
+        to: "+15551234567"
