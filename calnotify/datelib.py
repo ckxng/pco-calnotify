@@ -54,13 +54,3 @@ def format_date(dt) -> str:
     :return: a formatted string
     """
     return dt.astimezone(tz).strftime(date_fmt)
-
-
-def parse_and_format_date(dt_str) -> str:
-    """
-    parse a datetime string and format it as per format_date
-    :rtype: str
-    :param dt_str: an iso8661 formatted string
-    :return: a formatted string
-    """
-    return isoparse(dt_str).astimezone(tz).strftime(date_fmt)
