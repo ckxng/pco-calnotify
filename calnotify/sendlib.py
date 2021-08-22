@@ -8,23 +8,30 @@ from sendgrid.helpers.mail import Mail
 from twilio.rest import Client
 
 
-def sendmail(to, subject, text, sendgridapikey=os.environ['SENDGRIDAPIKEY']):
+def sendmail(to, subject, text, sendgridapikey=None, mailfrom=None):
     """
     Send a plain text email
     If apikey is not provided, it will be fetched from os.environ['SENDGRIDAPIKEY']
+    If mailfrom is not provided, it will be fetched from os.environ['MAILFROM']
 
     If os.environ['TESTMODE']=='1', this function will return without taking action
     :param to: the email address to send to
     :param subject: the email subject
     :param text: the plain text message to send
     :param sendgridapikey: SendGrid API Key
+    :param mailfrom: email address to send from
     """
     if os.environ.get('TESTMODE', None) == '1':
         print("TESTMODE: sendmail:", to, subject)
         return
 
+    if sendgridapikey is None:
+        sendgridapikey = os.environ['SENDGRIDAPIKEY']
+    if mailfrom is None:
+        mailfrom = os.environ['MAILFROM']
+
     message = Mail(
-        from_email=os.environ['MAILFROM'],
+        from_email=mailfrom,
         to_emails=to,
         subject=subject,
         plain_text_content=text)
@@ -39,9 +46,9 @@ def sendmail(to, subject, text, sendgridapikey=os.environ['SENDGRIDAPIKEY']):
 
 
 def sendsms(to, text,
-            twiliosid=os.environ['TWILIOSID'],
-            twiliotoken=os.environ['TWILIOTOKEN'],
-            twilioservicesid=os.environ['TWILIOSERVICESID']):
+            twiliosid=None,
+            twiliotoken=None,
+            twilioservicesid=None):
     """
     Sends a SMS
     If twiliosid is not provided, it will be fetched from os.environ['TWILIOSID'].
@@ -58,6 +65,13 @@ def sendsms(to, text,
     if os.environ.get('TESTMODE', None) == '1':
         print("TESTMODE: sendsms:", to, text)
         return
+
+    if twiliosid is None:
+        twiliosid = os.environ['TWILIOSID']
+    if twiliotoken is None:
+        twiliotoken = os.environ['TWILIOTOKEN']
+    if twilioservicesid is None:
+        twilioservicesid = os.environ['SERVICESSID']
 
     client = Client(twiliosid, twiliotoken)
 
