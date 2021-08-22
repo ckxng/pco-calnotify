@@ -21,34 +21,25 @@ def sendmail(to, subject, text, sendgridapikey=None, mailfrom=None):
     :param sendgridapikey: SendGrid API Key
     :param mailfrom: email address to send from
     """
+    # do not actually send messages in TESTMODE
     if os.environ.get('TESTMODE', None) == '1':
-        print("TESTMODE: sendmail:", to, subject)
         return
 
+    # raise exceptions when required params are missing
     if sendgridapikey is None:
         sendgridapikey = os.environ['SENDGRIDAPIKEY']
     if mailfrom is None:
         mailfrom = os.environ['MAILFROM']
 
-    message = Mail(
+    # send the message
+    SendGridAPIClient(sendgridapikey).send(Mail(
         from_email=mailfrom,
         to_emails=to,
         subject=subject,
-        plain_text_content=text)
-    try:
-        sg = SendGridAPIClient(sendgridapikey)
-        response = sg.send(message)
-        print(response.status_code)
-        print(response.body)
-        print(response.headers)
-    except Exception as e:
-        print(e)
+        plain_text_content=text))
 
 
-def sendsms(to, text,
-            twiliosid=None,
-            twiliotoken=None,
-            twilioservicesid=None):
+def sendsms(to, text, twiliosid=None, twiliotoken=None, twilioservicesid=None):
     """
     Sends a SMS
     If twiliosid is not provided, it will be fetched from os.environ['TWILIOSID'].
@@ -62,10 +53,11 @@ def sendsms(to, text,
     :param twiliotoken: the Twilio Token
     :param twilioservicesid: the Twilio Messaging Service SID
     """
+    # do not actually send messages in TESTMODE
     if os.environ.get('TESTMODE', None) == '1':
-        print("TESTMODE: sendsms:", to, text)
         return
 
+    # raise exceptions when required params are missing
     if twiliosid is None:
         twiliosid = os.environ['TWILIOSID']
     if twiliotoken is None:
@@ -73,12 +65,8 @@ def sendsms(to, text,
     if twilioservicesid is None:
         twilioservicesid = os.environ['SERVICESSID']
 
-    client = Client(twiliosid, twiliotoken)
-
-    message = client.messages.create(
+    # send the message
+    Client(twiliosid, twiliotoken).messages.create(
         messaging_service_sid=twilioservicesid,
         body=text,
-        to=to
-    )
-
-    print(message.sid)
+        to=to)
