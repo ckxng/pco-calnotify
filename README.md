@@ -34,4 +34,7 @@ To run this app locally, clone the repo and run the following:
     pip install -r requirements.txt
 
     python3 app.py
-    
+
+When iterating over the codebase, you can set `TESTMODE=1` in `.env` to prevent
+the API from actually sending texts and emails, saving your balance in Twilio for
+real messages.
