@@ -16,7 +16,7 @@ tz = utc
 date_fmt = "%m/%d/%Y at %I:%M:%S %p"
 
 # set to now as of the time this module is first imported
-_now = datetime.now().replace(tzinfo=utc)
+_now = datetime.utcnow()
 
 # proxy isoparse into this module to keep date utils in one place and
 # to avoid having to import dateutil.parser into both this module and
@@ -34,19 +34,21 @@ def set_tz(tz_str: str):
     tz = timezone(tz_str)
 
 
-def is_days_away(dt, days) -> bool:
+def is_days_away(dt: datetime, days: int) -> bool:
     """
     Test to see if a datetime is more than days away, but less than days-1 from now.
+    This function compares only the date components, not the time.
     :rtype: bool
     :param dt: datetime object to compare
     :param days: the number of days away the time must be
     :return: True if *dt* is *days* days away, else False
     """
+    global _now
     day = timedelta(days=1)
-    return dt - ((days + 1) * day) < _now < dt - (days * day)
+    return _now.astimezone(tz).date()+(days*day) == dt.astimezone(tz).date()
 
 
-def format_date(dt) -> str:
+def format_date(dt: datetime) -> str:
     """
     format a datetime according to the tz and date_fmt globally defined in datelib
     :rtype: str
