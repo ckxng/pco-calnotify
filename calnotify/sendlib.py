@@ -63,7 +63,7 @@ def sendsms(to, text, twiliosid=None, twiliotoken=None, twilioservicesid=None):
     if twiliotoken is None:
         twiliotoken = os.environ['TWILIOTOKEN']
     if twilioservicesid is None:
-        twilioservicesid = os.environ['SERVICESSID']
+        twilioservicesid = os.environ['TWILIOSERVICESID']
 
     # send the message
     Client(twiliosid, twiliotoken).messages.create(
